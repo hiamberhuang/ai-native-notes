@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>在上海参加两场 FDE 活动后，我开始重新思考人机协作 | Amber Huang</title>
+<meta name="description" content="从 B站到 AI 创业公司，半年内两次 landing 的完整对比。附可直接复制的 onboarding prompt、agent.md 模板与自查清单。">
+<style>
+:root{
+  --paper:#FAF9F7;--ink:#0F1419;--violet:#5B21B6;--violet-soft:#F3EEFF;
+  --gray:#6B7280;--line:#E6E3DE;--card:#FFF;
+  --amber:#B45309;--amber-soft:#FEF6E7;--green:#047857;--green-soft:#ECFDF5;
+  --code-bg:#1A1F26;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--ink);
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Hiragino Sans GB","Microsoft YaHei",sans-serif;
+  font-size:16px;line-height:1.85;letter-spacing:.01em}
+.wrap{max-width:780px;margin:0 auto;padding:0 24px 120px}
+
+/* lang toggle */
+.langbar{position:sticky;top:0;z-index:50;background:rgba(250,249,247,.92);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);padding:12px 0}
+.langbar .inner{max-width:780px;margin:0 auto;padding:0 24px;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.brand{font-size:13px;font-weight:600;color:var(--gray);letter-spacing:.02em}
+.toggle{display:flex;gap:4px;background:#EDEAE5;padding:3px;border-radius:20px}
+.toggle button{border:0;background:none;padding:5px 15px;border-radius:16px;cursor:pointer;
+  font-size:12.5px;font-weight:600;color:var(--gray);font-family:inherit;transition:.15s}
+.toggle button.on{background:#fff;color:var(--violet);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+
+body[data-lang="zh"] .en{display:none}
+body[data-lang="en"] .zh{display:none}
+body[data-lang="en"]{letter-spacing:0}
+
+/* hero */
+.hero{padding:72px 0 46px;border-bottom:1px solid var(--line)}
+.kicker{font-size:12.5px;letter-spacing:.16em;color:var(--violet);font-weight:700;margin-bottom:20px}
+h1{font-size:38px;line-height:1.35;margin:0 0 22px;font-weight:700;letter-spacing:-.01em}
+.sub{font-size:18px;color:var(--gray);line-height:1.8;margin:0 0 28px}
+.meta{font-size:13px;color:var(--gray);display:flex;gap:18px;flex-wrap:wrap}
+.meta b{color:var(--ink);font-weight:600}
+
+/* video */
+.videos{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:34px 0 0}
+.vid{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--line);
+  border-radius:11px;padding:15px 18px;text-decoration:none;color:var(--ink);transition:.15s}
+.vid:hover{border-color:var(--violet);transform:translateY(-1px)}
+.vid.soon{opacity:.5;pointer-events:none}
+.vid .ico{font-size:18px;line-height:1}
+.vid .t{font-size:14px;font-weight:600;line-height:1.4}
+.vid .s{font-size:11.5px;color:var(--gray);margin-top:2px}
+
+/* tldr */
+.tldr{background:var(--violet-soft);border-radius:14px;padding:28px 30px;margin:44px 0 0}
+.tldr h2{font-size:12.5px;letter-spacing:.16em;color:var(--violet);margin:0 0 18px;font-weight:700}
+.tldr ol{margin:0;padding-left:20px}
+.tldr li{margin-bottom:12px;font-size:16.5px}
+.tldr li:last-child{margin-bottom:0}
+.tldr li b{color:var(--violet)}
+
+section{padding-top:66px}
+h2.sec{font-size:26px;margin:0 0 10px;font-weight:700;line-height:1.45}
+h2.sec .num{color:var(--violet);font-size:14.5px;display:block;margin-bottom:10px;letter-spacing:.12em;font-weight:700}
+.lede{color:var(--gray);font-size:16px;margin:0 0 30px}
+p{margin:0 0 18px}
+h3{font-size:18px;margin:38px 0 14px;font-weight:700}
+h3 .step{color:var(--violet);font-size:12px;letter-spacing:.1em;display:block;margin-bottom:5px;font-weight:700}
+
+/* table */
+.tablewrap{overflow-x:auto;-webkit-overflow-scrolling:touch;margin:26px 0}
+table{border-collapse:collapse;width:100%;min-width:540px;font-size:15px;background:var(--card);border-radius:12px;overflow:hidden}
+th,td{padding:15px 18px;text-align:left;vertical-align:top;border-bottom:1px solid var(--line)}
+thead th{background:#F2F0EC;font-size:12.5px;letter-spacing:.06em;color:var(--gray);font-weight:700}
+tbody tr:last-child td{border-bottom:none}
+td.dim{color:var(--gray)}
+th.axis,td.axis{width:120px;font-weight:600;font-size:14px;background:#FBFAF8}
+.tag{display:inline-block;font-size:11px;padding:2px 9px;border-radius:20px;font-weight:700;letter-spacing:.04em}
+.tag.before{background:#F1F1EF;color:var(--gray)}
+.tag.after{background:var(--violet-soft);color:var(--violet)}
+
+/* code */
+.codeblock{position:relative;margin:20px 0}
+.codeblock .hd{display:flex;justify-content:space-between;align-items:center;
+  background:#252B33;color:#9CA3AF;font-size:11.5px;padding:9px 16px;border-radius:10px 10px 0 0;
+  letter-spacing:.06em;font-weight:600}
+.codeblock .cp{background:#3A424C;border:0;color:#D1D5DB;font-size:11px;padding:3px 10px;
+  border-radius:5px;cursor:pointer;font-family:inherit;font-weight:600}
+.codeblock .cp:hover{background:#4A5462;color:#fff}
+pre{margin:0;background:var(--code-bg);color:#E5E7EB;padding:18px 20px;border-radius:0 0 10px 10px;
+  overflow-x:auto;font-size:13.5px;line-height:1.75;
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;white-space:pre-wrap;word-break:break-word}
+
+/* pull */
+.pull{margin:40px 0;padding:32px 34px;background:var(--ink);color:#fff;border-radius:14px}
+.pull .q{font-size:23px;line-height:1.6;font-weight:600;margin:0 0 16px}
+.pull .who{font-size:13px;color:#9CA3AF;margin:0}
+.pull .why{margin-top:22px;padding-top:20px;border-top:1px solid #2A3038;font-size:15px;color:#D1D5DB}
+.pull .why b{color:#fff}
+
+/* cards */
+.cards{display:grid;gap:16px;margin:28px 0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:24px 26px}
+.card h4{margin:0 0 10px;font-size:17px;font-weight:700}
+.card h4 .n{color:var(--violet);margin-right:10px;font-variant-numeric:tabular-nums}
+.card p{margin:0;font-size:15.5px;color:#374151}
+.card .eg{margin-top:14px;padding-top:14px;border-top:1px dashed var(--line);font-size:14px;color:var(--gray)}
+.card .eg b{color:var(--violet)}
+
+/* flow */
+.flow{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:20px 0;font-size:14px}
+.step-b{background:#F2F0EC;color:var(--gray);padding:9px 15px;border-radius:8px;white-space:nowrap}
+.step-b.dead{text-decoration:line-through;opacity:.5}
+.step-b.now{background:var(--violet);color:#fff;font-weight:700;padding:9px 22px}
+.arrow{color:#C9C5BE}
+
+/* links */
+.links{display:grid;gap:10px;margin:24px 0}
+.linkrow{display:flex;align-items:center;gap:14px;background:var(--card);border:1px solid var(--line);
+  border-radius:10px;padding:14px 18px;text-decoration:none;color:var(--ink);transition:.15s}
+.linkrow:hover{border-color:var(--violet)}
+.linkrow .lbl{font-size:11.5px;color:var(--violet);font-weight:700;letter-spacing:.06em;min-width:52px}
+.linkrow .txt{font-size:15px;flex:1}
+.linkrow .go{color:#C9C5BE;font-size:13px}
+
+.note{background:var(--amber-soft);border-left:3px solid var(--amber);padding:18px 22px;
+  border-radius:0 10px 10px 0;margin:26px 0;font-size:15px}
+.note b{color:var(--amber)}
+.good{background:var(--green-soft);border-left-color:var(--green)}
+.good b{color:var(--green)}
+
+/* checklist */
+.check{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:30px 32px;margin:30px 0}
+.check h3{margin:0 0 20px;font-size:19px}
+.check ul{list-style:none;margin:0;padding:0}
+.check li{padding:14px 0 14px 34px;position:relative;border-bottom:1px solid var(--line);font-size:15.5px}
+.check li:last-child{border-bottom:none;padding-bottom:0}
+.check li:before{content:"";position:absolute;left:4px;top:21px;width:14px;height:14px;
+  border:2px solid var(--violet);border-radius:4px}
+.check li b{display:block;margin-bottom:3px}
+.check li span{color:var(--gray);font-size:14.5px}
+
+.end{margin:62px 0 0;padding:42px 36px;background:var(--violet);color:#fff;border-radius:16px;text-align:center}
+.end .big{font-size:24px;line-height:1.6;font-weight:700;margin:0 0 12px}
+.end .small{font-size:14px;color:#DDD3F7;margin:0}
+footer{margin-top:56px;padding-top:26px;border-top:1px solid var(--line);font-size:13px;color:var(--gray);line-height:1.9}
+footer a{color:var(--violet);text-decoration:none}
+
+@media(max-width:640px){
+  .hero{padding:48px 0 34px}h1{font-size:27px}.sub{font-size:16.5px}
+  h2.sec{font-size:22px}.wrap{padding:0 18px 80px}.langbar .inner{padding:0 18px}
+  .pull{padding:26px 24px}.pull .q{font-size:19px}
+  .tldr,.check{padding:24px 22px}.end{padding:32px 24px}.end .big{font-size:20px}
+  .videos{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body data-lang="zh">
+
+<div class="langbar"><div class="inner">
+  <span class="brand">Amber Huang · AI Native Notes</span>
+  <div class="toggle">
+    <button id="bzh" class="on" onclick="setLang('zh')">中文</button>
+    <button id="ben" onclick="setLang('en')">EN</button>
+  </div>
+</div></div>
+
+<div class="wrap">
+
+<!-- ============ HERO ============ -->
+<div class="hero">
+  <div class="kicker zh">AI NATIVE 一线观察</div>
+  <div class="kicker en">FIELD NOTES ON AI-NATIVE WORK</div>
+
+  <h1 class="zh">在上海参加两场 FDE 活动后<br>我开始重新思考人机协作</h1>
+  <h1 class="en">Two FDE Meetups in Shanghai<br>Made Me Rethink Human-AI Collaboration</h1>
+
+  <p class="sub zh">FDE 现在好像被捧上了神坛，火热程度堪比 2021 年留学生圈「文科转码」的热潮。但真正的 AI Native 到底长什么样？这是我从 B站到 AI 创业公司这半年，两个一线场景的完整记录，附可直接复制的 prompt 和模板。</p>
+  <p class="sub en">FDE has become the most hyped job title of the year, with the same fever I saw around "humanities majors learning to code" back in 2021. But what does AI-native work actually look like? Here are two first-hand cases from my last six months, moving from Bilibili to an AI startup, with copy-paste prompts and templates included.</p>
+
+  <div class="meta">
+    <span class="zh"><b>加七</b>　AI 营销转型 @ Noumena</span>
+    <span class="en"><b>Amber Huang</b>　AI Marketing Transformation @ Noumena</span>
+    <span class="zh">2026 年 9 月</span><span class="en">September 2026</span>
+    <span class="zh">阅读约 9 分钟</span><span class="en">9 min read</span>
+  </div>
+
+  <div class="videos">
+    <a class="vid soon" href="#"><span class="ico">📕</span><span><span class="t zh">小红书视频版</span><span class="t en">Xiaohongshu Video</span><span class="s zh">即将发布</span><span class="s en">Coming soon</span></span></a>
+    <a class="vid soon" href="#"><span class="ico">▶️</span><span><span class="t zh">YouTube 版</span><span class="t en">YouTube Version</span><span class="s zh">即将发布</span><span class="s en">Coming soon</span></span></a>
+  </div>
+</div>
+
+<!-- ============ TLDR ============ -->
+<div class="tldr">
+  <h2 class="zh">全文三句话</h2>
+  <h2 class="en">THE WHOLE THING IN THREE LINES</h2>
+  <ol class="zh">
+    <li>半年前我在 B站 landing 靠 coffee chat 和人传人，今天我在 Noumena landing 靠 AI 读完全部周报纪要。<b>差别不是有没有用 AI，是这家公司的知识写没写下来。</b></li>
+    <li>我一个文科生，两个月独立打通了公司官网的前后端。<b>AI 最被低估的不是它能干活，是它便宜到可以被浪费、可以被无限次否定。</b></li>
+    <li>AI 最大的问题不是能力不够，是它不在乎。<b>人的价值在于在乎、审美判断、知道什么时候喊停，以及替 AI 把记忆攒起来。</b></li>
+  </ol>
+  <ol class="en">
+    <li>Six months ago I onboarded at Bilibili through coffee chats and word of mouth. Today I onboard at Noumena by having AI read every weekly report we have ever written. <b>The difference is not whether the company uses AI. It is whether the company writes things down.</b></li>
+    <li>I studied humanities. In two months I shipped our company website end to end, front and back. <b>The most underrated thing about AI is not that it can do the work. It is that it is cheap enough to waste and can be rejected a hundred times without cost.</b></li>
+    <li>AI's real limitation is not capability. It is that it does not care. <b>Human value now lives in caring, in taste, in knowing when to stop, and in building the memory AI cannot build for itself.</b></li>
+  </ol>
+</div>
+
+<!-- ============ 01 ============ -->
+<section>
+  <h2 class="sec"><span class="num">01</span><span class="zh">FDE 是不是旧瓶装新酒？</span><span class="en">Is FDE Just Old Wine in a New Bottle?</span></h2>
+  <p class="lede zh">AI 时代的「文科转码」</p>
+  <p class="lede en">The "humanities to code" moment of the AI era</p>
+
+  <p class="zh">这周我去上海跑了两场 FDE 分享，一场飞书办的，一场千问办公办的。听完之后我只有一个感受：大家是不是把 FDE 捧得太高了？</p>
+  <p class="en">This week I went to two FDE meetups in Shanghai, one hosted by Feishu and one by Qwen Office. I walked out with a single reaction: are we putting FDE on too high a pedestal?</p>
+
+  <p class="zh">你要说这两场分享真的让我学到了什么叫 AI Native 的写作模式、颠覆性的企业 AI 革命吗？我要打一个大大的问号。</p>
+  <p class="en">Did either session actually teach me what an AI-native way of working looks like, or show me a genuine enterprise AI revolution? I have serious doubts.</p>
+
+  <p class="zh">所以今天想聊一个话题：<b>到底什么叫真正的 AI Native？</b>我会从我加入 AI 创业公司之后的一线体感来讲。</p>
+  <p class="en">So let me ask the real question: <b>what does genuinely AI-native work look like?</b> I will answer it with two things I actually lived through after joining an AI startup.</p>
+
+  <div class="links">
+    <a class="linkrow" href="https://mp.weixin.qq.com/s/7LtV4TwX_2zbGeAjy05arg" target="_blank" rel="noopener">
+      <span class="lbl zh">活动</span><span class="lbl en">EVENT</span>
+      <span class="txt zh">00 后的新职业：FDE｜9.10 创业小酒馆</span>
+      <span class="txt en">FDE: the new job for Gen Z｜Sept 10 founder meetup</span>
+      <span class="go">↗</span></a>
+  </div>
+</section>
+
+<!-- ============ 02 ============ -->
+<section>
+  <h2 class="sec"><span class="num">02</span><span class="zh">场景一 · Landing</span><span class="en">Case One · Onboarding</span></h2>
+  <p class="lede zh">同一个人，半年之内，两次入职</p>
+  <p class="lede en">Same person. Two onboardings. Six months apart.</p>
+
+  <p class="zh">半年前我在 B站 landing，新人上手基本靠 coffee chat、靠张嘴问、靠人传人。今年 CNY 推了 100 个直播间，我们开了无数个 3 小时起步的 50 人宣讲会。</p>
+  <p class="en">Six months ago at Bilibili, getting up to speed meant coffee chats, asking around, and information passed person to person. For the Chinese New Year push we launched 100 live rooms, which meant countless briefing sessions, 50 people each, three hours minimum.</p>
+
+  <p class="zh">然而今天我加入 Noumena，第一件事是接入飞书 CLI，让 AI 自动读取过往所有周报、周会纪要。</p>
+  <p class="en">At Noumena, the first thing I did was connect the Feishu CLI and let AI read every weekly report and meeting note the company had ever produced.</p>
+
+  <div class="tablewrap">
+  <table class="zh">
+    <thead><tr><th class="axis">对比维度</th><th><span class="tag before">半年前 · B站</span></th><th><span class="tag after">今天 · Noumena</span></th></tr></thead>
+    <tbody>
+      <tr><td class="axis">信息在哪</td><td class="dim">在人的脑子里</td><td>在系统里，编织成企业 context</td></tr>
+      <tr><td class="axis">怎么拿到</td><td class="dim">coffee chat、张嘴问、人传人</td><td>接入飞书 CLI，AI 自动读完全部周报和纪要</td></tr>
+      <tr><td class="axis">谁判断我该看什么</td><td class="dim">靠 leader 口头说，靠自己摸</td><td>AI 按我的职责自动列出：该掌握的信息、该精读的文档、该对接的 POC</td></tr>
+      <tr><td class="axis">一次同步的成本</td><td class="dim">3 小时起步、50 人的宣讲会，开无数场</td><td>一条命令，输出滚完就看完</td></tr>
+      <tr><td class="axis">起效时间</td><td class="dim">入职后好几周</td><td>入职前就已经完成</td></tr>
+    </tbody>
+  </table>
+  <table class="en">
+    <thead><tr><th class="axis">Dimension</th><th><span class="tag before">6 months ago · Bilibili</span></th><th><span class="tag after">Today · Noumena</span></th></tr></thead>
+    <tbody>
+      <tr><td class="axis">Where knowledge lives</td><td class="dim">In people's heads</td><td>In the system, woven into company context</td></tr>
+      <tr><td class="axis">How you get it</td><td class="dim">Coffee chats, asking around, word of mouth</td><td>Connect the CLI; AI reads every report and note</td></tr>
+      <tr><td class="axis">Who decides what matters</td><td class="dim">Your manager tells you, or you figure it out</td><td>AI maps my role to: what to know, what to read first, who to talk to</td></tr>
+      <tr><td class="axis">Cost of one sync</td><td class="dim">3-hour sessions, 50 people, repeated endlessly</td><td>One command; done when the output stops scrolling</td></tr>
+      <tr><td class="axis">Time to value</td><td class="dim">Several weeks after starting</td><td>Finished before my first day</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="note good">
+    <span class="zh"><b>关键不在工具。</b>Noumena 从 day one 就保持信息高度透明，所有联创每周向下属汇报工作，所有跨部门协同这周做了什么、进度和失败、甚至大家对 AI 的思考，全部被编织进了巨大的企业 context 里。<b>没有这一层，接什么 CLI 都没用。</b></span>
+    <span class="en"><b>The tool is not the point.</b> Noumena has been radically transparent since day one. Every co-founder reports to their team weekly. Every cross-team update, including progress, failures, and half-formed thoughts about AI, gets woven into one enormous company context. <b>Without that layer, no CLI will save you.</b></span>
+  </div>
+
+  <h3><span class="step zh">可以直接抄走 · 01</span><span class="step en">COPY THIS · 01</span><span class="zh">用 AI 做新人 onboarding</span><span class="en">Onboard yourself with AI</span></h3>
+  <p class="zh">把公司过往的周报、周会纪要导出来喂给它，然后用这段 prompt：</p>
+  <p class="en">Export your company's past weekly reports and meeting notes, feed them in, then use this prompt:</p>
+  <div class="codeblock">
+    <div class="hd"><span class="zh">ONBOARDING PROMPT</span><span class="en">ONBOARDING PROMPT</span><button class="cp" onclick="cp(this)">复制</button></div>
+    <pre>这是我们公司过去 N 个月的全部周报和周会纪要。
+我的岗位是【职位】，负责【职责范围】。
+
+请基于这些材料告诉我：
+1. 我必须掌握的关键信息有哪些，按重要性排序
+2. 我应该精读的文档清单，说明每一份为什么重要
+3. 我日常需要对接的上下游 POC 是谁，各自负责什么
+4. 这家公司有哪些没写在制度里、但大家默认遵守的做事习惯
+5. 我这个岗位最容易踩的三个坑是什么</pre>
+  </div>
+
+  <p class="zh">于是我甚至在入职前就蒸馏了我的三位 +1。当我和 COO 说有时候不太理解 CEO 一些比较抽象的需求时，COO 跟我说了一句话，我当时愣了一下。</p>
+  <p class="en">That is how I had already profiled my three direct managers before my first day. When I told our COO that I sometimes could not follow the CEO's more abstract requests, he said something that stopped me short.</p>
+
+  <div class="pull">
+    <p class="q zh">让 CEO 把他的 agent.md 给你，你先和他的 agent 聊，再和他本人聊。</p>
+    <p class="q en">Ask the CEO for his agent.md. Talk to his agent first, then talk to him.</p>
+    <p class="who zh">—— 我们 COO，在互联网和 SaaS 行业扎根 20 多年</p>
+    <p class="who en">— our COO, 20+ years in internet and SaaS</p>
+    <div class="why zh"><b>为什么这句值得停一下：</b>今天大家总觉得，只有年轻的、天生数字原住民才更 AI Native、更能接受 AI 的玩法。但一个已经在行业里深耕 20 多年的老兵，今天依然能这么彻底地重构自己的工作模式。他不是在「学 AI」，他是<b>用 AI 的逻辑在重新组织沟通方式</b>。AI Native 这件事，真的跟年龄无关。</div>
+    <div class="why en"><b>Why this line matters:</b> we tend to assume only young digital natives can be truly AI-native. But someone with two decades in the industry had rebuilt his own way of working this completely. He was not "learning AI." He was <b>reorganising human communication around how AI works</b>. Being AI-native has nothing to do with age.</div>
+  </div>
+
+  <h3><span class="step zh">可以直接抄走 · 02</span><span class="step en">COPY THIS · 02</span><span class="zh">写一份你自己的 agent.md</span><span class="en">Write your own agent.md</span></h3>
+  <p class="zh">让别人先跟你的 agent 聊，前提是你得有一份。这是最小可用结构：</p>
+  <p class="en">Before anyone can talk to your agent, you need one. Here is the minimum viable structure:</p>
+  <div class="codeblock">
+    <div class="hd">agent.md<button class="cp" onclick="cp(this)">复制</button></div>
+    <pre># 关于我的工作方式
+
+## 我最关心什么
+（列 3 到 5 条，按优先级。写具体，不要写「质量」这种词）
+
+## 我的判断标准
+（一个方案递到我面前，我会先看什么、再看什么）
+
+## 我讨厌的表达方式
+（比如：只给结论不给依据 / 一次性抛五个选项让我选）
+
+## 找我之前请先准备
+（明确列出你希望对方带着什么来）
+
+## 我常用的术语和它们的确切含义
+（这一节最值钱，能省掉大量反复对齐）</pre>
+  </div>
+
+  <p class="zh">更日常的场景是开会。所有会议我都会打开飞书妙记，结束后直接把纪要丢给 AI，它直接帮我改好，不需要任何多余的 prompt。</p>
+  <p class="en">A more everyday example: meetings. I record everything with Feishu Minutes, then hand the transcript to AI afterwards. It cleans it up without needing any prompt at all.</p>
+
+  <p class="zh">AI 是并发的、零社交成本的，还能处理巨大的上下文吞吐量。人做不到同时看一年的会议纪要、一次读完五十万字然后回答其中任意一个细节的问题。AI 可以。</p>
+  <p class="en">AI is parallel, socially frictionless, and handles enormous context throughput. No human can read a year of meeting notes at once, absorb half a million words, and then answer a question about any detail inside them. AI can.</p>
+</section>
+
+<!-- ============ 03 ============ -->
+<section>
+  <h2 class="sec"><span class="num">03</span><span class="zh">场景二 · 官网</span><span class="en">Case Two · The Website</span></h2>
+  <p class="lede zh">一个文科生，独立打通前后端</p>
+  <p class="lede en">A humanities major shipping front and back end alone</p>
+
+  <p class="zh">这两个月我上线了最大的项目，我们公司的新版官网。前后经历了四次大的版本迭代，成了现在的样子。期间我看了无数企业官网，包括 Palantir、Ploy.ai，研究了一堆交互模式，试了好几种视觉风格。</p>
+  <p class="en">Over the past two months I shipped the biggest project I have ever owned: our company's new website. It went through four major iterations to get here. Along the way I studied countless company sites, including Palantir and Ploy.ai, dissected their interaction patterns, and tried several visual directions.</p>
+
+  <h3 class="zh">以前做一个页面，要走这条链路</h3>
+  <h3 class="en">The old way to ship one page</h3>
+  <div class="flow zh">
+    <span class="step-b dead">设计出稿</span><span class="arrow">→</span><span class="step-b dead">PS 切图</span><span class="arrow">→</span>
+    <span class="step-b dead">平台部署</span><span class="arrow">→</span><span class="step-b dead">上线</span>
+  </div>
+  <div class="flow en">
+    <span class="step-b dead">Designer mockup</span><span class="arrow">→</span><span class="step-b dead">Slice in PS</span><span class="arrow">→</span>
+    <span class="step-b dead">Deploy via platform</span><span class="arrow">→</span><span class="step-b dead">Live</span>
+  </div>
+  <h3 class="zh">现在</h3><h3 class="en">Now</h3>
+  <div class="flow"><span class="step-b now zh">我自己</span><span class="step-b now en">Just me</span></div>
+
+  <p class="zh">这放在半年前我绝对不敢想。在美团、B站，以前得工程师给你做一个傻瓜操作平台才能搞定的事，我现在自己就跑通了。</p>
+  <p class="en">Six months ago I would not have dared. At Meituan and Bilibili, this was the kind of thing that required engineers to build you a dumbed-down internal tool first. Now I just do it.</p>
+
+  <p class="zh">从我为了转行 AI 手搓了个人官网，到正式加入公司之后，我一个文科生独立打通了官网的前后端链路。<b>你们能想象一个文科生自己跑通前后端吗？我半年前也想不到。</b></p>
+  <p class="en">It started with hand-building my personal site to pivot into AI. Then I joined the company and shipped the corporate site end to end, front and back. <b>A humanities major running her own full stack. I could not have pictured it six months ago either.</b></p>
+
+  <div class="links">
+    <a class="linkrow" href="https://www.noumena.com.cn" target="_blank" rel="noopener"><span class="lbl">LIVE</span><span class="txt zh">Noumena 官网 · 现在的样子</span><span class="txt en">Noumena — the version that shipped</span><span class="go">↗</span></a>
+    <a class="linkrow" href="https://solution.alphacat.pro/noumena-site-v3" target="_blank" rel="noopener"><span class="lbl">V1</span><span class="txt zh">第一版 · 沉淀 BOOT 方法论</span><span class="txt en">v1 — establishing the BOOT framework</span><span class="go">↗</span></a>
+    <a class="linkrow" href="https://solution.alphacat.pro/share/noumena-site-v5" target="_blank" rel="noopener"><span class="lbl">V2</span><span class="txt zh">第二版 · 叙事转向 AI 转型</span><span class="txt en">v2 — pivoting the narrative to AI transformation</span><span class="go">↗</span></a>
+    <a class="linkrow" href="https://solution.alphacat.pro/noumena-site-v6-light" target="_blank" rel="noopener"><span class="lbl">V6</span><span class="txt zh">第六版 · 浅色定稿方向</span><span class="txt en">v6 — the light direction we locked</span><span class="go">↗</span></a>
+    <a class="linkrow" href="https://amberhuang.world" target="_blank" rel="noopener"><span class="lbl zh">起点</span><span class="lbl en">ORIGIN</span><span class="txt zh">个人站 · 一切开始的地方</span><span class="txt en">Personal site — where it all started</span><span class="go">↗</span></a>
+  </div>
+</section>
+
+<!-- ============ 04 ============ -->
+<section>
+  <h2 class="sec"><span class="num">04</span><span class="zh">AI 的三个特质</span><span class="en">Three Properties of AI</span></h2>
+  <p class="lede zh">除了「能干活」之外，真正改变工作方式的三件事</p>
+  <p class="lede en">Beyond "it can do the work," the three things that actually change how you work</p>
+  <div class="cards">
+    <div class="card">
+      <h4><span class="n">01</span><span class="zh">宽度</span><span class="en">Breadth</span></h4>
+      <p class="zh">AI 能让一个人的覆盖面积突然变大。它什么都不精，但能帮你跑通一个项目的完整闭环。</p>
+      <p class="en">AI expands the surface area one person can cover. It is not the best at anything, but it can carry an entire project loop end to end.</p>
+      <div class="eg zh"><b>我的实例：</b>文案、视觉、前端、后端、部署，五个环节以前要五个人，现在一个人能串起来。</div>
+      <div class="eg en"><b>My case:</b> copy, visuals, front end, back end, deployment. Five roles before. One person now.</div>
+    </div>
+    <div class="card">
+      <h4><span class="n">02</span><span class="zh">没有情绪损耗</span><span class="en">No emotional cost</span></h4>
+      <p class="zh">你跟同事说第三次「不对重来」，关系就裂了。你跟 AI 说 100 次，它下一次还是笑眯眯地给你干。</p>
+      <p class="en">Tell a colleague "wrong, start over" a third time and something breaks. Tell AI a hundred times and it comes back exactly as willing.</p>
+      <div class="eg zh"><b>我的实例：</b>调官网动效那两周，我说过的「不对」大概比我这半年跟人说的都多。</div>
+      <div class="eg en"><b>My case:</b> during two weeks of tuning site animations I said "not right" more times than I had to humans all year.</div>
+    </div>
+    <div class="card">
+      <h4><span class="n">03</span><span class="zh">便宜到可以浪费</span><span class="en">Cheap enough to waste</span></h4>
+      <p class="zh">10 万的外包预算，变成了两个月 Claude 200 刀的 plan，不到 3000 块，外加我个人的时间。</p>
+      <p class="en">A six-figure RMB agency budget became two months of a $200 Claude plan, under 3,000 RMB, plus my own time.</p>
+      <div class="eg zh"><b>真正的变化：</b>不是省了钱，是<b>做四个版本再扔掉三个</b>这件事，第一次变得不心疼。</div>
+      <div class="eg en"><b>The real shift:</b> not the savings. It is that <b>building four versions and discarding three</b> stopped hurting.</div>
+    </div>
+  </div>
+  <div class="note">
+    <span class="zh"><b>第三条才是真正的分水岭。</b>人的时间贵，所以人做事必须先规划、一次做对。AI 便宜到可以先做三版扔掉两版。功夫从「想清楚」转移到了「快速判断哪版好」。</span>
+    <span class="en"><b>The third one is the real watershed.</b> Human time is expensive, so humans must plan first and get it right once. AI is cheap enough to build three and throw away two. The effort moves from thinking it through to judging quickly which version is better.</span>
+  </div>
+</section>
+
+<!-- ============ 05 ============ -->
+<section>
+  <h2 class="sec"><span class="num">05</span><span class="zh">那人到底干啥？</span><span class="en">So What Are Humans For?</span></h2>
+  <p class="lede zh">用了这么久 AI，它最大的问题不是能力不够，是它不在乎</p>
+  <p class="lede en">After all this time, AI's biggest problem is not capability. It is that it does not care.</p>
+  <div class="cards">
+    <div class="card">
+      <h4 class="zh">它不在乎</h4><h4 class="en">It does not care</h4>
+      <p class="zh">它不承担后果，所以它说「小心」的时候，是在模仿小心，不是真的怕。你让它写一封要发给 10 万用户的推送，它写得很快，但它不会多想一秒「这句话发出去会不会出事」。</p>
+      <p class="en">It bears no consequences, so when it says "be careful" it is imitating caution, not feeling it. Ask it to write a push notification going to 100,000 users and it writes fast, without spending one second on whether that sentence could blow up.</p>
+    </div>
+    <div class="card">
+      <h4 class="zh">它的审美是平均数</h4><h4 class="en">Its taste is an average</h4>
+      <p class="zh">做出来的东西你看着觉得「嗯，都对」，但不会有人惊呼「卧槽这个好」。那个天花板，得靠人去顶。</p>
+      <p class="en">What it produces reads as "yes, all correct." Nobody gasps. That ceiling has to be pushed by a human.</p>
+    </div>
+    <div class="card">
+      <h4 class="zh">它不会说「这事根本不该做」</h4><h4 class="en">It will not tell you to stop</h4>
+      <p class="zh">你给了它一个错的方向，它会沿着错的方向跑得非常漂亮，最后交付一个精美的错误。</p>
+      <p class="en">Point it in the wrong direction and it will run that direction beautifully, delivering an immaculate mistake.</p>
+    </div>
+    <div class="card">
+      <h4 class="zh">它记不住</h4><h4 class="en">It does not remember</h4>
+      <p class="zh">你以为它记住了你上个月说的偏好，其实它没有。它的记忆是你一砖一瓦搭起来的，你得替它建，它不会自己长出来。</p>
+      <p class="en">You think it remembers the preference you stated last month. It does not. Its memory is something you build brick by brick. It will not grow one on its own.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 06 ============ -->
+<section>
+  <h2 class="sec"><span class="num">06</span><span class="zh">可以直接抄走的五条</span><span class="en">Five Questions to Steal</span></h2>
+  <p class="lede zh">如果你想判断自己公司离 AI Native 有多远</p>
+  <p class="lede en">If you want to know how far your company is from AI-native</p>
+  <div class="check">
+    <h3 class="zh">自查清单</h3><h3 class="en">Self-assessment</h3>
+    <ul class="zh">
+      <li><b>你公司的关键决策，是写下来的还是开会开出来的？</b><span>开会的产出是空气，写下来的产出才是 AI 能吃的 context。这一条不过关，接什么模型都没用。</span></li>
+      <li><b>新人 landing 靠人传人，还是靠读系统？</b><span>如果答案是前者，说明你们的知识还没变成资产。</span></li>
+      <li><b>你的老板有没有一份 agent.md？</b><span>能把自己的判断标准写成文档的人，才是真的在用 AI 的逻辑组织工作。</span></li>
+      <li><b>你敢不敢做三版然后扔掉两版？</b><span>不敢，说明你还在用「人的成本」思考问题。</span></li>
+      <li><b>AI 的记忆，谁在替它建？</b><span>没人建，就等于每次都从零开始，所有积累都在蒸发。</span></li>
+    </ul>
+    <ul class="en">
+      <li><b>Are your key decisions written down, or held in meetings?</b><span>Meeting output is air. Written output is context AI can actually eat. Fail this one and no model will help you.</span></li>
+      <li><b>Do new hires onboard through people, or through the system?</b><span>If it is people, your knowledge has not become an asset yet.</span></li>
+      <li><b>Does your manager have an agent.md?</b><span>Anyone who can write their own judgment criteria into a document is genuinely organising work around how AI works.</span></li>
+      <li><b>Would you build three versions and throw away two?</b><span>If not, you are still pricing work at human cost.</span></li>
+      <li><b>Who is building AI's memory?</b><span>If nobody is, you start from zero every time and everything you learn evaporates.</span></li>
+    </ul>
+  </div>
+</section>
+
+<div class="end">
+  <p class="big zh">AI 是你手里最快的那把刀<br>但往哪儿砍，还是你说了算</p>
+  <p class="big en">AI is the sharpest blade you will ever hold<br>Where it cuts is still your call</p>
+  <p class="small zh">下一篇：我们怎么在一家传统企业里，用 AI 把营销链路从头到尾跑了一遍</p>
+  <p class="small en">Next: how we rebuilt an entire marketing pipeline with AI inside a traditional enterprise</p>
+</div>
+
+<footer>
+  <span class="zh">加七 · AI 营销转型 @ <a href="https://www.noumena.com.cn" target="_blank" rel="noopener">Noumena</a>　|　个人站 <a href="https://amberhuang.world" target="_blank" rel="noopener">amberhuang.world</a><br>本文所有截图与链接均为真实项目，可点开验证。</span>
+  <span class="en">Amber Huang · AI Marketing Transformation @ <a href="https://www.noumena.com.cn" target="_blank" rel="noopener">Noumena</a>　|　<a href="https://amberhuang.world" target="_blank" rel="noopener">amberhuang.world</a><br>Every link and screenshot here points to a real, live project. Click and verify.</span>
+</footer>
+
+</div>
+
+<script>
+function setLang(l){
+  document.body.dataset.lang=l;
+  document.documentElement.lang = (l==='en')?'en':'zh-CN';
+  document.getElementById('bzh').classList.toggle('on',l==='zh');
+  document.getElementById('ben').classList.toggle('on',l==='en');
+  try{localStorage.setItem('lang',l)}catch(e){}
+}
+try{
+  var saved=localStorage.getItem('lang');
+  if(!saved && navigator.language && navigator.language.slice(0,2)!=='zh') saved='en';
+  if(saved) setLang(saved);
+}catch(e){}
+function cp(btn){
+  var t=btn.closest('.codeblock').querySelector('pre').innerText;
+  navigator.clipboard.writeText(t).then(function(){
+    var o=btn.textContent; btn.textContent='已复制 ✓';
+    setTimeout(function(){btn.textContent=o},1600);
+  });
+}
+</script>
+</body>
+</html>
